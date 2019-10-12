@@ -1,0 +1,25 @@
+{
+  "datalist":[
+    {
+      "name":"公司",
+      "key":"component",
+      "children":[{
+        "name":["核心指标","核心指标"],
+        "ID":"001_001",
+        "path":"company/core"
+      },
+        {
+          "name":["核心指标","用户数据"],
+          "ID":"001_002",
+          "path":"company/userData"
+        },
+        {
+          "name":["运营中心","核心数据"],
+          "ID":"002_001",
+          "path":"company/coreData"
+        }
+      ]
+    }
+
+  ]
+}
