@@ -10,6 +10,10 @@ export default {
             path:'createCatalogue',
             component:resolve=>require(['components/createCatalogue.vue'],resolve),
         },
+        {
+            path:'digui',
+            component:resolve=>require(['components/digui.vue'],resolve),
+        },
     ]
 
 }

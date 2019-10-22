@@ -1,10 +1,10 @@
 <template>
     <div class="BusinessLines">
 
-        <label >业务线：</label>
-        <RadioGroup v-model="BusinessLinesSelect">
-            <Radio v-for="(item,index) in BusinessLinesList" :label="item" :key="index" size="small" ></Radio>
-        </RadioGroup>
+        <!--<label >业务线：</label>-->
+        <!--<RadioGroup v-model="">-->
+            <!--<Radio v-for="(item,index) in BusinessLinesList" :label="item.workline" :key="index" size="small" ></Radio>-->
+        <!--</RadioGroup>-->
 
           <!--<div>-->
               <!--<Drawer-->

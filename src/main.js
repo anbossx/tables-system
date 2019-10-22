@@ -8,10 +8,13 @@ import Vueaxios from 'vue-axios';
 import 'view-design/dist/styles/iview.css';
 import 'css/bi-charts-table.css'
 import 'css/layout.css'
+import 'css/createCatalogue.css'
 import layout from './components/common/layout'
 import biCharts from 'assets/js/barOrcharts'
 import echarts from "echarts"
-import  tableOrcharts from 'components/tableAndcharts/index'
+import tableOrcharts from 'components/tableAndcharts/index'
+
+import util from 'components/common/util/index'
 axios.defaults.headers.get['Auth-Token'] = 'FwBEGnh5bV7N2LpB';
 Vue.config.productionTip = false;
 Vue.prototype.$echarts=echarts;
@@ -19,6 +22,7 @@ Vue.prototype.$biCharts=biCharts;
 Vue.use(iView);
 Vue.use(Vueaxios, axios);
 Vue.use(tableOrcharts);
+Vue.use(util);
 router.beforeEach((to, from, next) => {
     let getLoginMsg=JSON.parse(localStorage.getItem('LoginMsg'));
    let currentTime=new Date().getTime();

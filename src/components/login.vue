@@ -26,12 +26,13 @@
                 user:'',
                 password:'',
                 firstUrl:'',
+                worksList:[],
             }
         },
         methods:{
             setStorage(key,value){
                 let lastTime = new Date().getTime()+60*60*1000;
-                localStorage.setItem(key,JSON.stringify({user:value,lastTime:lastTime}))
+                localStorage.setItem(key,JSON.stringify({user:value,lastTime:lastTime,firstUrl:this.firstUrl,worksList:this.worksList}))
             },
             Logining(){
               this.axios.post('/login/webLogin',{
@@ -39,8 +40,11 @@
                   password:this.password,
               }).then((response)=>{
                   if(response.data.code==200 && response.data.msg=='登陆成功'){
+                      let firstUrl=response.data.firstUrl;
+                      this.firstUrl=firstUrl;
+                      this.worksList=response.data.worksLines;
                       this.setStorage('LoginMsg',this.user);
-                      this.$router.push(this.firstUrl);
+                      this.$router.push(firstUrl);
                   }
               })
             },
@@ -54,15 +58,15 @@
                 }
             },
         },
-         created(){
-           this.axios.post('/nav',{
-               key:['company']
-           }).then((response)=>{
-                 let list=response.data.data;
-                 let url=this.getDaultPath(list[0].children);
-                 this.firstUrl=url;
-           })
-        }
+        //  created(){
+        //    this.axios.post('/nav',{
+        //        key:['company']
+        //    }).then((response)=>{
+        //          let list=response.data.data;
+        //          let url=this.getDaultPath(list[0].children);
+        //          this.firstUrl=url;
+        //    })
+        // }
     }
 </script>
 

@@ -60,9 +60,17 @@
                             <Icon type="ios-book-outline" />
                             创建报表
                         </MenuItem>
-
-
+                        <MenuItem name="1" to="/user/digui">
+                            <Icon type="ios-book-outline" />
+                            递归组建
+                        </MenuItem>
                     </div>
+
+                        <MenuItem name="1" :to="firstUrl">
+                            home
+                        </MenuItem>
+
+
                 </Menu>
             </Header>
             <Content :style="{padding: '0 50px'}">
@@ -80,8 +88,12 @@
     export default {
          data(){
              return{
-
+                 firstUrl:'',
              }
-         }
+         },
+        created(){
+           this.firstUrl=JSON.parse(localStorage.getItem('LoginMsg')).firstUrl;
+        }
     }
 </script>
+>

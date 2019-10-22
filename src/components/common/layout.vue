@@ -6,53 +6,29 @@
                 <Menu mode="horizontal" theme="dark" >
                     <div class="layout-logo"></div>
                     <div class="layout-nav">
-                        <MenuItem v-for="(item,index) in headerList" :name="item.name"  :key="index" :to="item.defaultPath" @click.native="getslider(item.name)">
-                             {{item.name}}
+                        <MenuItem v-for="(item,index) in headerList" :name="item.workline"  :key="index" :to="item.defaultPath" @click.native="getslider(item.name)">
+                             {{item.workline}}
                         </MenuItem>
                     </div>
                     <div class="layout-mgr">
-
                         <MenuItem name="1" to="/user/createTable"> <span><Icon type="ios-person" size="30" color="white"/></span>{{user}}</MenuItem>
-
                     </div>
 
                 </Menu>
             </Header>
             <Layout>
                 <Sider hide-trigger :style="{background: '#fff'}">
-                    <Menu  :active-name="activename"  ref="shop">
-                        <Submenu v-for="(value,key) in sliderList" :name="key" :key="key" v-if="Array.isArray(value)">
-                            <template slot="title">
-                            <Icon type="ios-paper" />
-                              {{key}}
-                            </template>
-                            <Submenu v-for="(valueOne,keyOne) in value[0]" :key="keyOne" :name="keyOne" v-if="Array.isArray(valueOne)">
-                                <template slot="title">
-                                    <Icon type="ios-paper" />
-                                    {{keyOne}}
-                                </template>
-                                <MenuItem v-for="(valueTwo) in valueOne[0]" :key="valueTwo.path" :name="valueTwo.path" :to="valueTwo.path" @click.native="getchars">{{valueTwo.name}}</MenuItem>
-                            </Submenu>
-                            <MenuItem :name="valueOne.path" v-else :to="valueOne.path" @click.native="getchars">{{valueOne.name}}</MenuItem>
-                        </Submenu>
-                        <MenuItem  :name="value.path" v-else :to="value.path" @click.native="getchars">{{value.name}}</MenuItem>
-
+                    <Menu :theme="theme2" active-name='123460000' >
+                        <bi-navslider :navList="navlist"></bi-navslider>
                     </Menu>
                 </Sider>
 
-
-
                 <Layout :style="{padding: '0 24px 24px'}">
-                    <!--<Breadcrumb :style="{margin: '24px 0'}">-->
-                        <!--<BreadcrumbItem>Home</BreadcrumbItem>-->
-                        <!--<BreadcrumbItem>Components</BreadcrumbItem>-->
-                        <!--<BreadcrumbItem>Layout</BreadcrumbItem>-->
-                    <!--</Breadcrumb>-->
                     <Content :style="{ minHeight: '280px', background: '#fff'}">
                        <!--<div id="main" style="width: 500px;height: 500px;background-color: bisque"></div>-->
-                        <div v-for="item in pageDataList" >
-                          <component :is="item.component" :chartsConfig="item"></component>
-                       </div>
+                        <!--<div v-for="item in pageDataList" >-->
+                          <!--<component :is="item.component" :chartsConfig="item"></component>-->
+                       <!--</div>-->
 
                     </Content>
                 </Layout>
@@ -61,15 +37,17 @@
     </div>
 </template>
 <script>
+    import {navtree,getnav} from 'components/common/util/util'
     export default {
         data(){
             return{
+                theme2: 'light',
                activename:'',
                headerList:[],
                sliderList:[],
                 pageDataList:[],
-               user:'',
-
+                user:'',
+                navlist:[],
             }
         },
         methods:{
@@ -86,66 +64,28 @@
 
                 })
               },
-             getData(){
-                 return new Promise((res)=>{
-                     this.axios.post('/nav',{
-                         key:['company','market']
-                     }).then((response)=>{
-                         let list=response.data.data;
 
-                         for(let item of list){
-                             item.defaultPath=this.getDaultPath(item.children);
-                             // if(item.key==param){
-                             //     this.sliderList=item.children;
-                             // }
-                         }
-                         this.headerList=list;
-                          res(this.headerList)
-                         // console.log(list);
-
-                         // this.$store.commit('getDataList',list);
-                         // console.log(this.$store.state.Navlist);
-                     })
-                 });
-
-             },
-            getslider(name){
-               for(let item of this.headerList){
-                   if(item.name==name){
-                       this.sliderList=item.children;
-                       this.getchars();
-                   }
-               }
+            async getslider(user,line){
+                this.sliderList=await getnav(user,line);
+                //递归形成树状数据结构
+               this.navlist=navtree(this.sliderList,0);
             },
-
-            getDaultPath(data){
-                for(let key in data){
-                    if(Array.isArray(data[key])){
-                          return this.getDaultPath(data[key][0])
-                    }else {
-                        return data[key].path
-                    }
-                }
-            },
-
-
         },
         mounted(){
-            this.getchars();
-            this.$nextTick(function() {
-                this.$refs.shop.updateOpened();
-                this.activename=this.$route.path;
-                this.$refs.shop.updateActiveName()
-
-            });
+            // this.getchars();
+            // this.$nextTick(function() {
+            //     this.$refs.shop.updateOpened();
+            //     this.activename=this.$route.path;
+            //     this.$refs.shop.updateActiveName()
+            //
+            // });
         },
-        async created(){
-            let url=window.location.hash;
-             let currentLin=url.split('/')[1];
+          created(){
             let userMsg=JSON.parse(localStorage.getItem("LoginMsg"));
             this.user=userMsg.user.split('@')[0];
-            await this.getData();
-            this.getslider(currentLin);
+            this.headerList=userMsg.worksList;
+             let line=this.$route.path.split('/')[1];
+             this.getslider(userMsg.user,line);
 
         }
     }

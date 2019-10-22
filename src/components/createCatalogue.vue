@@ -2,8 +2,24 @@
 
     <div>
         <div class="createButtonStyle">
-            <Button @click="value3 = true" type="primary">创建目录</Button>
+            <RadioGroup  @on-change="lineNav">
+                <span  @dblclick="addFirstnav(item)" v-for="item in lineList" :key="item">
+                  <Radio :label="item" border size="small"></Radio>
+                </span>
+            </RadioGroup>
         </div>
+          <!--<div class="tableContainer">-->
+              <!--<Table border :columns="columns1" :data="data1"></Table>-->
+          <!--</div>-->
+        <Modal v-model="navNameShow" draggable scrollable title="请输入目录名称" @on-ok="submitData">
+            <div>
+                <Input v-model="navName" placeholder="Enter something..." style="width: 300px" />
+            </div>
+        </Modal>
+        <div style="width: 400px">
+            <Tree :data="data5" :render="renderContent"></Tree>
+        </div>
+
         <div>
             <Drawer
                     title="创建目录"
@@ -12,43 +28,16 @@
                     :mask-closable="false"
                     :styles="styles"
             >
-                <div>
-                    <label >业务线：</label>
-                    <RadioGroup v-model="BusinessLinesSelect">
-                        <Radio v-for="(item,index) in BusinessLinesList" :label="item" :key="index" size="small" ></Radio>
-                    </RadioGroup>
-                </div>
-
-                  <div>
-                      <div class="muluListStyle">
-                          <span>一级目录：</span>
-                          <span>
-                               <Input  placeholder="一级目录名称" style="width: 300px" v-model="catalogOne"/>
-                          </span>
-                      </div>
-                      <div class="muluListStyle">
-                          <span>二级目录：</span>
-                          <span>
-                                  <Input  placeholder="二级目录名称" style="width: 300px" v-model="catalogTwo" />
-                          </span>
-                      </div>
-                      <div class="muluListStyle">
-                          <span>三级目录：</span>
-                          <span>
-                                  <Input  placeholder="三级目录名称" style="width: 300px" v-model="catalogThree" />
-                          </span>
-                      </div>
-                  </div>
-
                 <div class="demo-drawer-footer" >
+                    <transition name="fade">
                     <div v-if="alertShow">
-                        <Alert :type='alertType' show-icon>
+                        <Alert type='warning' show-icon>
                             <template slot="desc">
-                                {{alertContent}}
+                               {{alertContent}}
                             </template>
                         </Alert>
                     </div>
-
+                    </transition>
                     <Button style="margin-right: 8px" @click="value3 = false">Cancel</Button>
                     <Button type="primary" @click="submitData">Submit</Button>
                 </div>
@@ -59,50 +48,105 @@
 </template>
 
 <script>
-    import serviceline  from 'assets/js/mixin'
+    import serviceline  from 'assets/js/mixin';
+    import {addnavTree,getnav} from 'components/common/util/util'
+    import dayjs from 'dayjs';
     export default {
         name: "createTable",
         mixins:[serviceline],
         data(){
             return{
-                value3: false,
-                catalogOne:'',
-                catalogTwo:'',
-                catalogThree:'',
+                 value3: false,
+                 navNameShow:false,
+                 alertContent:'',
+                 alertShow:false,
+                 selectlineName:'',
+                 navName:'',
+                 userMsg:JSON.parse(localStorage.getItem("LoginMsg")),
+                 lineList:[],
+                 appendData:{},
+                 data5: [],
+
             }
         },
         methods:{
+            stringToHex(str){
+                let idHex='';
+                for(let i=0;i<str.length;i++){
+                    idHex=idHex+str.charCodeAt(i).toString(16);
+                }
+                return idHex;
+            },
+            addFirstnav(line){
+                this.value3=true;
+            },
+            pageIdDeal(){
+               let timeUnix=dayjs().unix();
+                let user=this.userMsg.user.split('@')[0];
+                let pageid=user+timeUnix;
+                return this.stringToHex(pageid);
+            },
             submitData(){
-                if(this.catalogOne.length==0){
-                    this.alertShow=true;
-                    this.alertContent='一级目录为必填项，请您重新填写';
-                    this.alertType='warning';
+                let params={};
+                params.parentId=this.appendData.id;
+                params.id=this.pageIdDeal();
+
+                if(this.navName.length!=0){
+                  params.name=this.navName;
+                }else {
+                    this.$Message['warning']({
+                        background: true,
+                        content: '请输入目录名称'
+                    });
                     return
                 }
-                console.log(123)
+                params.path='/'+this.selectlineName+'/'+this.pageIdDeal();
+                params.serveLine=this.selectlineName;
+
+                this.addPage(params)
+
+            },
+            addPage(param){
+                this.axios.post('/nav/setnav',param).then((response)=>{
+                    if(response.data.code==200){
+                        this.$Message.success('目录创建成功');
+                        const children = this.appendData.children || [];
+                        children.push({
+                            title: param.name,
+                            id:param.id,
+                            expand: true
+                        });
+                        this.$set(this.appendData, 'children', children);
+                    }
+                })
+            },
+
+            async lineNav(lineName){
+                let user=this.userMsg.user;
+                this.selectlineName=lineName;
+                let navlist=await getnav(user,lineName);
+                //递归形成树状数据结构
+                let navTree=addnavTree(navlist,0);
+                 this.addRender(navTree);
+                 this.data5=navTree;
+            },
+            append (data) {
+                this.navNameShow=true;
+                 this.appendData=data;
+
+            },
+            remove (root, node, data) {
+                const parentKey = root.find(el => el === node).parent;
+                const parent = root.find(el => el.nodeKey === parentKey).node;
+                const index = parent.children.indexOf(data);
+                parent.children.splice(index, 1);
+            }
+        },
+        created(){
+            let line=this.userMsg.worksList;
+            for(let item of line){
+                this.lineList.push(item.workline)
             }
         }
     }
 </script>
-
-<style scoped>
-    .createButtonStyle{
-        display: flex;
-        margin-left: 30px;
-        margin-top: 20px;
-    }
-    .muluListStyle{
-       margin-top: 20px;
-    }
-    .demo-drawer-footer{
-        width: 100%;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        border-top: 1px solid #e8e8e8;
-        padding: 10px 16px;
-        text-align: right;
-        background: #fff;
-    }
-
-</style>
