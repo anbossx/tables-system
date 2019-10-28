@@ -1,0 +1,21 @@
+.condition{
+    display: table-cell;
+}
+/*.ivu-tree{*/
+    /*padding-right: 242px;*/
+/*}*/
+.username{
+    padding-top: 5px;
+}
+.tableRow{
+    margin-top: 20px;
+}
+.demo-drawer-footer{
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+.ivu-tree-empty{
+    text-align: center;
+    margin-top: 31px;
+}

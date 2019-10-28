@@ -4,6 +4,49 @@ export default {
             alertShow:false,
             alertContent:'',
             alertType:'',
+            renderfun: (h, { root, node, data }) => {
+                return h('span', {
+                    style: {
+                        display: 'inline-block',
+                        width: '100%'
+                    }
+                }, [
+                    h('span',{
+                        style:{
+                            marginLeft:'-225px'
+                        }},[
+                        h('Icon', {
+                            props: {
+                                type: 'ios-folder-outline'
+                            },
+                            style: {
+                                marginRight: '8px'
+                            }
+                        }),
+                        h('span', data.title)
+                    ]),
+                    h('span', {
+                        style: {
+                            display: 'inline-block',
+                            float: 'right',
+                            marginRight: '32px'
+                        }
+                    }, [
+                        h('Button', {
+                            props: Object.assign({}, this.buttonProps, {
+                                icon: 'ios-add',
+                                type: 'primary'
+                            }),
+                            style: {
+                                width: '64px'
+                            },
+                            on: {
+                                click: () => { this.append(data) }
+                            }
+                        })
+                    ])
+                ]);
+            },
             styles: {
                 height: 'calc(100% - 55px)',
                 overflow: 'auto',
@@ -21,51 +64,7 @@ export default {
     methods:{
            addRender(navList) {
             for(let item of navList){
-                item.render= (h, { root, node, data }) => {
-                    return h('span', {
-                        style: {
-                            display: 'inline-block',
-                            width: '100%'
-                        }
-                    }, [
-                        h('span',{
-                            style:{
-                                marginLeft:'-225px'
-                            }},[
-                            h('Icon', {
-                                props: {
-                                    type: 'ios-folder-outline'
-                                },
-                                style: {
-                                    marginRight: '8px'
-                                }
-                            }),
-                            h('span', data.title)
-                        ]),
-                        h('span', {
-                            style: {
-                                display: 'inline-block',
-                                float: 'right',
-                                marginRight: '32px'
-                            }
-                        }, [
-                            h('Button', {
-                                props: Object.assign({},
-                                    this.buttonProps,
-                                    {
-                                        icon: 'ios-add',
-                                        type: 'primary'
-                                    }),
-                                style: {
-                                    width: '64px'
-                                },
-                                on: {
-                                    click: () => { this.append(data) }
-                                }
-                            })
-                        ])
-                    ]);
-                };
+                item.render= this.renderfun
             }
         },
         renderContent (h, { root, node, data }) {

@@ -60,9 +60,9 @@
                             <Icon type="ios-book-outline" />
                             创建报表
                         </MenuItem>
-                        <MenuItem name="1" to="/user/digui">
+                        <MenuItem name="1" to="/user/power">
                             <Icon type="ios-book-outline" />
-                            递归组建
+                            权限分配
                         </MenuItem>
                     </div>
 

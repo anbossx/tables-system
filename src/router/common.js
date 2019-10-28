@@ -11,8 +11,8 @@ export default {
             component:resolve=>require(['components/createCatalogue.vue'],resolve),
         },
         {
-            path:'digui',
-            component:resolve=>require(['components/digui.vue'],resolve),
+            path:'power',
+            component:resolve=>require(['components/power.vue'],resolve),
         },
     ]
 

@@ -3,45 +3,23 @@
     <div>
         <div class="createButtonStyle">
             <RadioGroup  @on-change="lineNav">
-                <span  @dblclick="addFirstnav(item)" v-for="item in lineList" :key="item">
+                <span  @dblclick="firstNavNameShow=true" v-for="item in lineList" :key="item">
                   <Radio :label="item" border size="small"></Radio>
                 </span>
             </RadioGroup>
         </div>
-          <!--<div class="tableContainer">-->
-              <!--<Table border :columns="columns1" :data="data1"></Table>-->
-          <!--</div>-->
         <Modal v-model="navNameShow" draggable scrollable title="请输入目录名称" @on-ok="submitData">
             <div>
-                <Input v-model="navName" placeholder="Enter something..." style="width: 300px" />
+                <Input v-model="navName" placeholder="请输入目录名称..." style="width: 300px" />
             </div>
         </Modal>
-        <div style="width: 400px">
+        <Modal v-model="firstNavNameShow" draggable scrollable title="请输入目录名称" @on-ok="firstsubmitData">
+            <div>
+                <Input v-model="firstnavName" placeholder="请输入目录名称..." style="width: 300px" />
+            </div>
+        </Modal>
+        <div class="treeContainer">
             <Tree :data="data5" :render="renderContent"></Tree>
-        </div>
-
-        <div>
-            <Drawer
-                    title="创建目录"
-                    v-model="value3"
-                    width="720"
-                    :mask-closable="false"
-                    :styles="styles"
-            >
-                <div class="demo-drawer-footer" >
-                    <transition name="fade">
-                    <div v-if="alertShow">
-                        <Alert type='warning' show-icon>
-                            <template slot="desc">
-                               {{alertContent}}
-                            </template>
-                        </Alert>
-                    </div>
-                    </transition>
-                    <Button style="margin-right: 8px" @click="value3 = false">Cancel</Button>
-                    <Button type="primary" @click="submitData">Submit</Button>
-                </div>
-            </Drawer>
         </div>
     </div>
 
@@ -56,12 +34,14 @@
         mixins:[serviceline],
         data(){
             return{
-                 value3: false,
+
                  navNameShow:false,
+                 firstNavNameShow:false,
                  alertContent:'',
                  alertShow:false,
                  selectlineName:'',
                  navName:'',
+                 firstnavName:'',
                  userMsg:JSON.parse(localStorage.getItem("LoginMsg")),
                  lineList:[],
                  appendData:{},
@@ -77,8 +57,37 @@
                 }
                 return idHex;
             },
-            addFirstnav(line){
-                this.value3=true;
+            firstsubmitData(){
+                let params={
+                    parentId:0,
+                    id:this.pageIdDeal(),
+                    serveLine:this.selectlineName,
+                };
+                 params.path='/'+this.selectlineName+'/'+params.id
+                if(this.firstnavName.length!=0){
+                    params.name=this.firstnavName
+                }else {
+                    this.$Message['warning']({
+                        background: true,
+                        content: '请输入目录名称'
+                    });
+                    return
+                }
+
+                this.axios.post('/nav/setnav',params).then((response)=>{
+                    if(response.data.code==200){
+                        this.$Message.success('目录创建成功,请联系相关人员给您开次目录权限');
+                        this.data5.push({
+                            expand:true,
+                            id:params.id,
+                            parentId:params.parentId,
+                            title:params.name,
+                            render:this.renderfun
+
+                        });
+                    }
+                })
+
             },
             pageIdDeal(){
                let timeUnix=dayjs().unix();
@@ -100,7 +109,7 @@
                     });
                     return
                 }
-                params.path='/'+this.selectlineName+'/'+this.pageIdDeal();
+                params.path='/'+this.selectlineName+'/'+params.id;
                 params.serveLine=this.selectlineName;
 
                 this.addPage(params)
@@ -109,7 +118,7 @@
             addPage(param){
                 this.axios.post('/nav/setnav',param).then((response)=>{
                     if(response.data.code==200){
-                        this.$Message.success('目录创建成功');
+                        this.$Message.success('目录创建成功,请联系相关人员给您开次目录权限');
                         const children = this.appendData.children || [];
                         children.push({
                             title: param.name,
@@ -131,9 +140,8 @@
                  this.data5=navTree;
             },
             append (data) {
-                this.navNameShow=true;
+                 this.navNameShow=true;
                  this.appendData=data;
-
             },
             remove (root, node, data) {
                 const parentKey = root.find(el => el === node).parent;

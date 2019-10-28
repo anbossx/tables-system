@@ -17,7 +17,6 @@ export default new Router({
         {
             path:'/market/*',
             component:resolve=>require(['../components/common/layout.vue'],resolve)
-
         },
         commom
 
