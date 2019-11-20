@@ -14,6 +14,10 @@ export default {
             path:'power',
             component:resolve=>require(['components/power.vue'],resolve),
         },
+        {
+            path:'chartsTest',
+            component:resolve=>require(['components/chartsTest.vue'],resolve),
+        },
     ]
 
 }

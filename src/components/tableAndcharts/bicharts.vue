@@ -1,8 +1,8 @@
 <template>
     <div >
         <div class="titleContainer"><span class="biTitle">{{chrtsTitle}}</span></div>
-        <div class="preparation" v-for="item in propList.preparation">
-              <span v-for="item1 in item" class="conditionContainer" v-if="!item1.show">
+        <div class="preparation" v-for="(item,index) in propList.preparation" :key="index">
+              <span v-for="item1 in item" class="conditionContainer" v-if="!item1.show" :key="item1.label">
                 <label class="labelStyle">{{item1.label}}： </label>
                      <component :is="item1.component" :linkConfig="lineAge" v-model="item1.value" :type="item1.type" size="small" range-separator="-" :placeholder="item1._like" :options="item1.data"  expand-trigger="hover" filterable clearable change-on-select  :style="{width:item1.width?item1.width+'px':200+'px'} "></component>
               </span>
@@ -25,7 +25,7 @@
             return{
                 propList:this.chartsConfig,
                 param:{},
-                url:'接口前缀'+this.chartsConfig.url,//因为涉及公司安全，所以请自行填写
+                url:''+this.chartsConfig.url,//因为涉及公司安全，所以请自行填写
                 chrtsTitle:'',
                 lineAge:[],
             }
@@ -160,7 +160,7 @@
                                 }
                                 else if (item.component=='bi-radio') {
                                     if(item.hasOwnProperty('urlchange')&& (item['urlchange']==true ||  item['urlchange']=='true')){
-                                        this.url='接口前缀'+item.value;
+                                        this.url=''+item.value;
                                     }else {
                                         this.param[item.key]=item.value;
                                     }

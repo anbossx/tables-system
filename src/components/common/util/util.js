@@ -1,28 +1,44 @@
 import axios from 'axios'
 //根据parentId组织树状结构
-  export let navtree=function (list,parentId) {
-      let navList=[];
-      for(let item of list){
-          if(item.parentId==parentId){
-              let navItem={};
-              if(item.hasOwnProperty('path')){
-                  navItem.id=item.id;
-                  navItem.name=item.name;
-                  navItem.parentId=item.parentId;
-                  navItem.path=item.path;
-                  navList.push(navItem)
-              }else {
-                  navItem.id=item.id;
-                  navItem.name=item.name;
-                  navItem.parentId=item.parentId;
-                  navItem.children=navtree(list,item.id);
-                  navList.push(navItem)
-              }
+export let navtree=function (params) {
+    let navList=[];
+    for(let item of params.data){
+        if(item.parentId==params.parentId){
+            let navItem={};
+            if(item.hasOwnProperty('path')){
+                if(params.path){
+                    navItem.id=item.id;
+                    navItem.name=item.name;
+                    navItem.parentId=item.parentId;
+                    navItem.path=item.path;
+                    navList.push(navItem)
+                }else {
+                    navItem.id=item.id;
+                    navItem.name=item.name;
+                    navItem.path='false';
+                    navItem.parentId=item.parentId;
+                    navList.push(navItem)
 
-          }
-      }
-      return navList
-  };
+                }
+
+            }else {
+                let paramsChild={
+                    data:params.data,
+                    parentId:item.id,
+                    path:params.path
+                };
+                navItem.id=item.id;
+                navItem.name=item.name;
+                navItem.parentId=item.parentId;
+                navItem.children=navtree(paramsChild);
+                navList.push(navItem)
+            }
+
+        }
+    }
+    return navList
+};
+
 export let addnavTree=function (list,parentId) {
     let navList=[];
     for(let item of list){

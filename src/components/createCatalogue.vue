@@ -28,6 +28,7 @@
 <script>
     import serviceline  from 'assets/js/mixin';
     import {addnavTree,getnav} from 'components/common/util/util'
+
     import dayjs from 'dayjs';
     export default {
         name: "createTable",
@@ -155,6 +156,10 @@
             for(let item of line){
                 this.lineList.push(item.workline)
             }
-        }
+        },
+
     }
 </script>
+<style scoped>
+    @import '../assets/css/createCatalogue.css';
+</style>

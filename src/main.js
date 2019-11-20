@@ -6,9 +6,6 @@ import iView from 'view-design';
 import axios from 'axios';
 import Vueaxios from 'vue-axios';
 import 'view-design/dist/styles/iview.css';
-import 'css/bi-charts-table.css'
-import 'css/layout.css'
-import 'css/createCatalogue.css'
 import layout from './components/common/layout'
 import biCharts from 'assets/js/barOrcharts'
 import echarts from "echarts"

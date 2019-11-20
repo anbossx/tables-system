@@ -64,6 +64,10 @@
                             <Icon type="ios-book-outline" />
                             权限分配
                         </MenuItem>
+                        <MenuItem name="1" to="/user/chartsTest">
+                            <Icon type="ios-book-outline" />
+                            charts图测试
+                        </MenuItem>
                     </div>
 
                         <MenuItem name="1" :to="firstUrl">
@@ -80,7 +84,7 @@
                     </div>
                 </Card>
             </Content>
-            <Footer class="layout-footer-center">2011-2016 &copy; TalkingData</Footer>
+            <Footer class="layout-footer-center">2019-20120 &copy; anbo</Footer>
         </Layout>
     </div>
 </template>

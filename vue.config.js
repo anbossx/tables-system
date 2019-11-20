@@ -4,10 +4,19 @@ module.exports={
     outputDir:'dist',
     lintOnSave:false,
     assetsDir:'assets',
-
+    css:{
+        extract:true,
+        loaderOptions:{
+            css: {
+                // 这里的选项会传递给 css-loader
+                importLoaders: 1,
+            },
+        }
+    },
     devServer:{
         open:false,
         host:'localhost',
+        port:8086,
         proxy:'http://localhost:3001',
         hot: true,
         overlay: {

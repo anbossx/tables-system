@@ -5,9 +5,11 @@
                     <Icon type="ios-paper" />
                     {{item.name}}
                 </template>
-                <bi-navslider :navList="item.children"></bi-navslider>
+                <bi-navslider :navList="item.children" @onSelect="pageChange" ></bi-navslider>
             </Submenu>
-            <MenuItem :name="item.id"  :to="item.path"  :key="item.id"  v-else>{{item.name}}</MenuItem>
+            <MenuItem :name="item.id"  :to="item.path"  :key="item.id"  v-else-if="item.path!='false'" @click.native="pageChange(item)">{{item.name}}</MenuItem>
+            <MenuItem :name="item.id"   :key="item.id"  v-else @click.native="pageChange(item)">{{item.name}}</MenuItem>
+
         </div>
 </template>
 
@@ -21,13 +23,13 @@
         },
         computed:{
             navlist:function () {
-                console.log(this.navList);
+
                 return this.navList
             }
         },
         methods:{
-            selectChange(name){
-                console.log(name);
+            pageChange(item){
+               this.$emit('onSelect',item)
             }
         },
         created(){
