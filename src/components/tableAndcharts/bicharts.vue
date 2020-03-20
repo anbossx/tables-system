@@ -103,11 +103,6 @@
 
                     myCharts.setOption(option,true);
 
-
-
-
-
-
                 });
 
 

@@ -138,8 +138,12 @@ export function getnav(user,line) {
         line:line,
     };
     return new Promise((res)=>{
+       let ifModifiedSince='';
         axios.get('/nav/getnav',{
-            params:param
+            params:param,
+            headers:{
+                'if-modified-since':ifModifiedSince
+            }
         }).then((response)=>{
             res(response.data.data)
         })
